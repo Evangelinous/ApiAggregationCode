@@ -1,19 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
-using System.Reflection;
-using System.Text;
 using ApiAggregation.Services;
 using ApiAggregation.Extensions;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.IdentityModel.Tokens;
 using ApiAggregation.Middlewares;
 using WebApiAggregation.Services;
 

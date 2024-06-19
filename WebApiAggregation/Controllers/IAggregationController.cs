@@ -5,6 +5,6 @@ namespace ApiAggregation.Controllers
 {
     public interface IAggregationController
     {
-        Task<IActionResult> GetData(string weatherSearchTerm, string newsSearchTerm, string nasaSearchTerm);
+        Task<IActionResult> GetData(string weatherSearchTerm, string newsSearchTerm, string nasaSearchTerm, int pageSize);
     }
 }

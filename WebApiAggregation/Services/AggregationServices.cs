@@ -1,9 +1,8 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using ApiAggregation.Enums;
 using Microsoft.Extensions.Configuration;
 using WebApiAggregation.Services;
-using static System.Net.WebRequestMethods;
 
 namespace ApiAggregation.Services
 {
@@ -12,27 +11,27 @@ namespace ApiAggregation.Services
         private readonly HttpClient _httpClient;
         private readonly string _apiKeyNewsApi;
         private readonly string _apiKeyOpenWeatherMap;
-        private readonly string _apiKeyNasaApi;
 
         public AggregationServices(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
             _apiKeyNewsApi = configuration["NewsApi:ApiKey"];
             _apiKeyOpenWeatherMap = configuration["OpenWeatherMap:ApiKey"];
-            _apiKeyNasaApi = configuration["NasaApi:ApiKey"];
         }
 
-        public async Task<string> GetNewsAsync(string newsSearchTerm)
+        public async Task<string> GetNewsAsync(string newsSearchTerm, int pageSize)
         {
             try
             {
-                var response = await _httpClient.GetAsync($"http://newsapi.org/v2/everything?q={newsSearchTerm}&apiKey={_apiKeyNewsApi}");
+                var response = await _httpClient.GetAsync($"https://newsapi.org/v2/everything?q={newsSearchTerm}&pageSize={pageSize}&apiKey={_apiKeyNewsApi}");
                 response.EnsureSuccessStatusCode();
+
                 return await response.Content.ReadAsStringAsync();
             }
             catch (HttpRequestException ex)
             {
-                return $"Error: {ex.Message}";
+                SystemExceptions.ThrowHttpRequestException(ErrorCodes.HttpRequestException, ex.Message);
+                throw;
             }
         }
 
@@ -50,11 +49,11 @@ namespace ApiAggregation.Services
             }
         }
 
-        public async Task<string> GetNasaPhotosAsync(string nasaSearchTerm)
+        public async Task<string> GetNasaPhotosAsync(string nasaSearchTerm, int pageSize)
         {
             try
             {
-                var response = await _httpClient.GetAsync($"https://images-api.nasa.gov/search?q={nasaSearchTerm}&media_type=image"); response.EnsureSuccessStatusCode();
+                var response = await _httpClient.GetAsync($"https://images-api.nasa.gov/search?q={nasaSearchTerm}&media_type=image&page_size={pageSize}");
                 return await response.Content.ReadAsStringAsync();
             }
             catch (HttpRequestException ex)
