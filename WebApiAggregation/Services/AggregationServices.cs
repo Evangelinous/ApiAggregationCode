@@ -1,6 +1,5 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using ApiAggregation.Enums;
 using Microsoft.Extensions.Configuration;
 using WebApiAggregation.Services;
 
@@ -30,7 +29,7 @@ namespace ApiAggregation.Services
             }
             catch (HttpRequestException ex)
             {
-                SystemExceptions.ThrowHttpRequestException(ErrorCodes.HttpRequestException, ex.Message);
+                //SystemExceptions.ThrowHttpRequestException(ErrorCodes.HttpRequestException, ex.Message);
                 throw;
             }
         }

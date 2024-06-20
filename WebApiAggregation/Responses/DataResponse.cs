@@ -154,26 +154,4 @@ namespace WebApiAggregation.Responses
         public NewsResponse News { get; set; }
         public NasaResponse Nasa { get; set; }
     }
-
-    [HttpGet("[action]")]
-    [ProducesDefaultResponseType(typeof(ApiResponse))]
-    [Authorize(Roles = $"{nameof(AuthorizationRoles.Individual)}, {nameof(AuthorizationRoles.Manager)}, {nameof(AuthorizationRoles.HRBP)}")]
-    public async Task<ActionResult<ApiResponse>> GetData(string weatherSearchTerm, string newsSearchTerm, string nasaSearchTerm, int limit = 10)
-    {
-        var weatherTask = _weatherService.GetWeatherAsync(weatherSearchTerm);
-        var newsTask = _newsService.GetNewsAsync(newsSearchTerm, limit);
-        var nasaTask = _nasaService.GetNasaImagesAsync(nasaSearchTerm, limit);
-
-        await Task.WhenAll(weatherTask, newsTask, nasaTask);
-
-        var result = new ApiResponse
-        {
-            Weather = JsonConvert.DeserializeObject<WeatherResponse>(weatherTask.Result),
-            News = JsonConvert.DeserializeObject<NewsResponse>(newsTask.Result),
-            Nasa = JsonConvert.DeserializeObject<NasaResponse>(nasaTask.Result)
-        };
-
-        return Ok(result);
-    }
-
 }
