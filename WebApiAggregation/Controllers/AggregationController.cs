@@ -7,7 +7,6 @@ using ApiAggregation.Responses;
 using WebApiAggregation.Responses;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
-using ApiAggregation.Enums;
 
 namespace ApiAggregation.Controllers;
 

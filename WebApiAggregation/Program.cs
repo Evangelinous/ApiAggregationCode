@@ -25,6 +25,9 @@ builder.Configuration
 builder.Services.AddControllers();
 builder.Services.AddLogging();
 
+// Add Memory Cache
+builder.Services.AddMemoryCache();
+
 // Configure Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -71,9 +74,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 // Add custom services
-builder.Services.AddHttpClient<IAggregationServices, AggregationServices>();
-builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IAuthService, AuthService>();
+builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddHttpClient<IAggregationServices, AggregationServices>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
