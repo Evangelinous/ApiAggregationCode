@@ -1,33 +1,31 @@
-﻿using ApiAggregation.Models;
-using ApiAggregation.Services;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using WebApiAggregation.Models;
+using WebApiAggregation.Services;
 
-namespace WebApiAggregation.Services
+public class UserService : IUserService
 {
-    public class UserService : IUserService
+    private readonly List<UserDataModel> _users = new List<UserDataModel>
     {
-        // For simplicity, we use a hardcoded user. In a real application, you'd query a database.
-        private readonly List<UserDataModel> _users = new List<UserDataModel>
-        {
-            new UserDataModel
-            {
-                Username = "testuser",
-                FullName = "Test User",
-                Email = "testuser@example.com",
-                Password = "password" 
-            }
-        };
+        new UserDataModel { UserName = "user1", Roles = new List<string> { "User" } },
+        new UserDataModel { UserName = "admin", Roles = new List<string> { "Admin" } }
+    };
 
-        public bool ValidateUser(string username, string password)
+    private readonly Dictionary<string, string> _userPasswords = new Dictionary<string, string>
+    {
+        { "user1", "password1" },
+        { "admin", "password2" }
+    };
+
+    public UserDataModel ValidateUser(string username, string password)
+    {
+        var user = _users.FirstOrDefault(u => u.UserName == username);
+
+        if (user != null && _userPasswords.ContainsKey(username) && _userPasswords[username] == password)
         {
-            var user = _users.SingleOrDefault(u => u.Username == username && u.Password == password);
-            return user != null;
+            return user;
         }
 
-        public UserDataModel GetUserData(string username)
-        {
-            return _users.SingleOrDefault(u => u.Username == username);
-        }
+        return null;
     }
 }

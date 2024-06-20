@@ -2,13 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using ApiAggregation.Models;
-using ApiAggregation.Services;
+using WebApiAggregation.Models;
+using WebApiAggregation.Services;
 
 namespace ApiAggregation.Controllers
 {
@@ -20,59 +15,30 @@ namespace ApiAggregation.Controllers
         private readonly ILogger<AuthController> _logger;
         private readonly IConfiguration _configuration;
         private readonly IUserService _userService;
+        private readonly IAuthService _authService;
 
         public AuthController(ILogger<AuthController> logger,
                                  IConfiguration configuration,
-                                 IUserService userService)
+                                 IUserService userService,
+                                 IAuthService authService)
         {
             _logger = logger;
             _configuration = configuration;
             _userService = userService;
+            _authService = authService; 
         }
 
-        [HttpPost("Login")]
-        public ActionResult Login([FromBody] LoginModel loginModel)
-        {
-            if (!_userService.ValidateUser(loginModel.Username, loginModel.Password))
-            {
-                return Unauthorized(new LoginResponseBaseModel<string>("Invalid username or password"));
-            }
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LoginModel loginModel)
+        {   
+            var user = _userService.ValidateUser(loginModel.Username, loginModel.Password);
 
-            var token = GenerateJwtToken(loginModel.Username);
+            if (user == null)
+                return Unauthorized(new { message = "Invalid credentials" });
 
-            return Ok(new LoginResponseBaseModel<string>(token));
+            var token = _authService.GenerateJwtToken(user.UserName, user.Roles);
+            return Ok(new { token });
         }
-
-        [Authorize]
-        [HttpGet("GetUserData")]
-        public ActionResult GetUserData()
-        {
-            var username = User.Identity.Name;
-            var userData = _userService.GetUserData(username);
-
-            return Ok(new LoginResponseBaseModel<UserDataModel>(userData));
-        }
-
-        private string GenerateJwtToken(string username)
-        {
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, username),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JwtSettings:Issuer"],
-                audience: _configuration["JwtSettings:Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: creds);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
     }
 }
+

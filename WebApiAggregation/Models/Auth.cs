@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ApiAggregation.Models
+namespace WebApiAggregation.Models
 {
     public class LoginModel
     {
@@ -28,9 +28,10 @@ namespace ApiAggregation.Models
 
     public class UserDataModel
     {
-        public string Username { get; set; }
+        public string UserName { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; } 
+        public string Password { get; set; }
+        public IList<string> Roles { get; set; }
     }
 }

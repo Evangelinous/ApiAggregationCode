@@ -1,10 +1,9 @@
-﻿using ApiAggregation.Models;
+﻿using WebApiAggregation.Models;
 
-namespace ApiAggregation.Services
+namespace WebApiAggregation.Services
 {
     public interface IUserService
     {
-        bool ValidateUser(string username, string password);
-        UserDataModel GetUserData(string username);
+        UserDataModel ValidateUser(string username, string password);
     }
 }

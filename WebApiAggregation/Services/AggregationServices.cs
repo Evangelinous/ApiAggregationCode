@@ -1,6 +1,8 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using WebApiAggregation.Responses;
 using WebApiAggregation.Services;
 
 namespace ApiAggregation.Services
@@ -18,46 +20,51 @@ namespace ApiAggregation.Services
             _apiKeyOpenWeatherMap = configuration["OpenWeatherMap:ApiKey"];
         }
 
-        public async Task<string> GetNewsAsync(string newsSearchTerm, int pageSize)
+        public async Task<NewsResponse> GetNewsAsync(string newsSearchTerm, int pageSize)
         {
             try
             {
                 var response = await _httpClient.GetAsync($"https://newsapi.org/v2/everything?q={newsSearchTerm}&pageSize={pageSize}&apiKey={_apiKeyNewsApi}");
                 response.EnsureSuccessStatusCode();
 
-                return await response.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<NewsResponse>(content);
             }
             catch (HttpRequestException ex)
             {
                 //SystemExceptions.ThrowHttpRequestException(ErrorCodes.HttpRequestException, ex.Message);
-                throw;
+                throw ex;
             }
         }
 
-        public async Task<string> GetWeatherAsync(string weatherSearchTerm)
+        public async Task<WeatherResponse> GetWeatherAsync(string weatherSearchTerm)
         {
             try
             {
                 var response = await _httpClient.GetAsync($"http://api.openweathermap.org/data/2.5/weather?q={weatherSearchTerm}&appid={_apiKeyOpenWeatherMap}");
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsStringAsync();
+
+                var content = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<WeatherResponse>(content);
             }
             catch (HttpRequestException ex)
             {
-                return $"Error: {ex.Message}";
+                throw ex;
             }
         }
 
-        public async Task<string> GetNasaPhotosAsync(string nasaSearchTerm, int pageSize)
+        public async Task<NasaResponse> GetNasaPhotosAsync(string nasaSearchTerm, int pageSize)
         {
             try
             {
                 var response = await _httpClient.GetAsync($"https://images-api.nasa.gov/search?q={nasaSearchTerm}&media_type=image&page_size={pageSize}");
-                return await response.Content.ReadAsStringAsync();
+
+                var content = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<NasaResponse>(content);
             }
             catch (HttpRequestException ex)
             {
-                return $"Error: {ex.Message}";
+                throw ex;
             }
         }
     }

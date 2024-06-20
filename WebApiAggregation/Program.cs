@@ -7,11 +7,19 @@ using WebApiAggregation.Services;
 using ApiAggregation.Services;
 using System.Text;
 using System;
-using WebApiAggregation;
 using Microsoft.Extensions.Configuration;
+using System.IO;
 
+var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Ensure configuration is loaded correctly
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{env}.json", optional: true)
+    .AddEnvironmentVariables();
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -60,11 +68,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["JwtSettings:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]))
         };
-    }); 
+    });
 
 // Add custom services
+builder.Services.AddHttpClient<IAggregationServices, AggregationServices>();
 builder.Services.AddSingleton<IUserService, UserService>();
-
+builder.Services.AddSingleton<IAuthService, AuthService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline

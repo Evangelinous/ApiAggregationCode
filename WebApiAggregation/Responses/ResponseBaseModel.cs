@@ -6,6 +6,7 @@ namespace ApiAggregation.Responses;
 
 public class ResponseBaseModel<T>
 {
+
     public ResponseBaseModel()
     {
         Errors = new();
