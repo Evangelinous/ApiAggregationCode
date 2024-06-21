@@ -1,5 +1,4 @@
-﻿using ApiAggregation.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ApiAggregation.Responses;
@@ -26,14 +25,10 @@ public class ResponseBaseModel<T>
 public class Error
 {
     public Error() { }  
-    public Error(ErrorCodes errorCode, string errorDescription, ErrorTypes errorType)
+    public Error(string errorDescription)
     {
-        ErrorCode = errorCode.ToString();
         ErrorDescription = errorDescription;
-        ErrorType = errorType;
     }
 
-    public string ErrorCode { get; set; }
     public string ErrorDescription { get; set; }
-    public ErrorTypes ErrorType { get; set; }
 }

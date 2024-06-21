@@ -1,18 +1,14 @@
-﻿using ApiAggregation.Enums;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace WebApiAggregation.Responses
 {
     public class AggregatedResponse
     {
         public List<WeatherResponse> Weather { get; set; }
-        public List<NewsResponse> News { get; set; }
         public List<NasaResponse> Nasa { get; set; }
+        public List<BreweryResponse> Breweries { get; set; }
+
     }
 
     public class WeatherResponse
@@ -77,31 +73,6 @@ namespace WebApiAggregation.Responses
         public long Sunset { get; set; }
     }
 
-    public class NewsResponse
-    {
-        public string Status { get; set; }
-        public int TotalResults { get; set; }
-        public List<Article> Articles { get; set; }
-    }
-
-    public class Article
-    {
-        public Source Source { get; set; }
-        public string Author { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Url { get; set; }
-        public string UrlToImage { get; set; }
-        public DateTime PublishedAt { get; set; }
-        public string Content { get; set; }
-    }
-
-    public class Source
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-    }
-
     public class NasaResponse
     {
         public Collection Collection { get; set; }
@@ -148,10 +119,19 @@ namespace WebApiAggregation.Responses
         public string Href { get; set; }
     }
 
-    public class ApiResponse
+    public class BreweryResponse
     {
-        public WeatherResponse Weather { get; set; }
-        public NewsResponse News { get; set; }
-        public NasaResponse Nasa { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string BreweryType { get; set; }
+        public string Street { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string PostalCode { get; set; }
+        public string Country { get; set; }
+        public string Longitude { get; set; }
+        public string Latitude { get; set; }
+        public string Phone { get; set; }
+        public string WebsiteUrl { get; set; }
     }
 }

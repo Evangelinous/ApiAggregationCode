@@ -28,7 +28,14 @@ namespace ApiAggregation.Controllers
             _authService = authService; 
         }
 
-        [HttpPost("login")]
+        /// <summary>
+        /// Authenticates the user and returns a JWT token if the credentials are valid.
+        /// </summary>
+        /// <param name="loginModel">The login model containing the username and password.</param>
+        /// <returns>An IActionResult containing the JWT token if authentication is successful.</returns>
+        /// <response code="200">Returns the JWT token.</response>
+        /// <response code="401">If the credentials are invalid.</response>
+        [HttpGet("login")]
         public IActionResult Login([FromBody] LoginModel loginModel)
         {   
             var user = _userService.ValidateUser(loginModel.Username, loginModel.Password);

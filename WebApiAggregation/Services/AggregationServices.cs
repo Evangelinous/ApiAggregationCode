@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using WebApiAggregation.Responses;
 using WebApiAggregation.Services;
+using System.Collections.Generic;
 
 namespace ApiAggregation.Services
 {
@@ -23,31 +24,6 @@ namespace ApiAggregation.Services
             _apiKeyNewsApi = configuration["NewsApi:ApiKey"];
             _apiKeyOpenWeatherMap = configuration["OpenWeatherMap:ApiKey"];
             _cache = cache;
-        }
-
-        public async Task<NewsResponse> GetNewsAsync(string newsSearchTerm, int pageSize)
-        {
-            var cacheKey = $"News_{newsSearchTerm}_{pageSize}";
-            if (_cache.TryGetValue(cacheKey, out NewsResponse cachedNews))
-            {
-                return cachedNews;
-            }
-
-            try
-            {
-                var response = await _httpClient.GetAsync($"https://newsapi.org/v2/everything?q={newsSearchTerm}&pageSize={pageSize}&apiKey={_apiKeyNewsApi}");
-                response.EnsureSuccessStatusCode();
-
-                var content = await response.Content.ReadAsStringAsync();
-                var newsResponse = JsonConvert.DeserializeObject<NewsResponse>(content);
-
-                _cache.Set(cacheKey, newsResponse, _cacheDuration);
-                return newsResponse;
-            }
-            catch (HttpRequestException ex)
-            {
-                throw ex;
-            }
         }
 
         public async Task<WeatherResponse> GetWeatherAsync(string weatherSearchTerm)
@@ -93,6 +69,31 @@ namespace ApiAggregation.Services
 
                 _cache.Set(cacheKey, nasaResponse, _cacheDuration);
                 return nasaResponse;
+            }
+            catch (HttpRequestException ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<BreweryResponse>> GetBreweriesAsync(string brewerySearchTerm, int pageSize)
+        {
+            var cacheKey = $"Breweries_{brewerySearchTerm}_{pageSize}";
+            if (_cache.TryGetValue(cacheKey, out List<BreweryResponse> cachedBreweries))
+            {
+                return cachedBreweries;
+            }
+
+            try
+            {
+                var response = await _httpClient.GetAsync($"https://api.openbrewerydb.org/breweries?by_city={brewerySearchTerm}&per_page={pageSize}");
+                response.EnsureSuccessStatusCode();
+
+                var content = await response.Content.ReadAsStringAsync();
+                var breweriesResponse = JsonConvert.DeserializeObject<List<BreweryResponse>>(content);
+
+                _cache.Set(cacheKey, breweriesResponse, _cacheDuration);
+                return breweriesResponse;
             }
             catch (HttpRequestException ex)
             {
