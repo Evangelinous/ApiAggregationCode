@@ -75,12 +75,12 @@ namespace ApiAggregation.Services
                 throw ex;
             }
         }
-
         public async Task<List<BreweryResponse>> GetBreweriesAsync(string brewerySearchTerm, int pageSize)
         {
             var cacheKey = $"Breweries_{brewerySearchTerm}_{pageSize}";
             if (_cache.TryGetValue(cacheKey, out List<BreweryResponse> cachedBreweries))
             {
+
                 return cachedBreweries;
             }
 

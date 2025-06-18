@@ -42,13 +42,14 @@ public class AggregationController : ControllerBase, IAggregationController
         {
             var weatherTask = await _aggregationServices.GetWeatherAsync(weatherSearchTerm);
             var nasaTask = await _aggregationServices.GetNasaPhotosAsync(nasaSearchTerm, pageSize);
-            var breweries = await _aggregationServices.GetBreweriesAsync(brewerySearchTerm, pageSize);
+            // var breweries = await _aggregationServices.GetBreweriesAsync(brewerySearchTerm, pageSize);
+
 
             var result = new AggregatedResponse
             {
                 Weather = new List<WeatherResponse> { weatherTask },
                 Nasa = new List<NasaResponse> { nasaTask },
-                Breweries = breweries,
+                // Breweries = breweries,
             };
 
             return Ok(new ResponseBaseModel<AggregatedResponse> { Payload = result });
